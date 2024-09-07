@@ -1,0 +1,27 @@
+diff --git a/node_modules/@lookingglass/webxr/dist/webxr.d.ts b/node_modules/@lookingglass/webxr/dist/webxr.d.ts
+new file mode 100644
+index 0000000..0bee985
+--- /dev/null
++++ b/node_modules/@lookingglass/webxr/dist/webxr.d.ts
+@@ -0,0 +1,6 @@
++export * from "./LookingGlassControls";
++export * from "./LookingGlassMediaController";
++export * from "./LookingGlassWebXRPolyfill";
++export * from "./LookingGlassWindow";
++export * from "./LookingGlassXRDevice";
++export * from "./LookingGlassXRWebGLLayer";
+\ No newline at end of file
+diff --git a/node_modules/@lookingglass/webxr/package.json b/node_modules/@lookingglass/webxr/package.json
+index c170f32..708874c 100644
+--- a/node_modules/@lookingglass/webxr/package.json
++++ b/node_modules/@lookingglass/webxr/package.json
+@@ -9,7 +9,8 @@
+   "exports": {
+     ".": {
+       "import": "./dist/webxr.js",
+-      "require": "./dist/webxr.umd.cjs"
++      "require": "./dist/webxr.umd.cjs",
++      "types": "./dist/webxr.d.ts"
+     }
+   },
+   "version": "0.6.0",
