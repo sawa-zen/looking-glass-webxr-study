@@ -9,7 +9,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "postinstall": "patch-package",
-    "deploy": "vite build && gh-pages -d dist"
+    "deploy": "vite build --base=/looking-glass-webxr-study && gh-pages -d dist"
   },
   "devDependencies": {
     "@types/three": "^0.168.0",
