@@ -7,10 +7,12 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "deploy": "vite build && gh-pages -d dist"
   },
   "devDependencies": {
     "@types/three": "^0.168.0",
+    "gh-pages": "^6.2.0",
     "typescript": "^5.5.3",
     "vite": "^5.4.1"
   },

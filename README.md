@@ -7,3 +7,9 @@ Looking Glass を WebXR で試すための実験リポジトリです。
 yarn install
 yarn dev
 ```
+
+デプロイは以下のコマンドを実行
+
+```
+yarn deploy
+```
