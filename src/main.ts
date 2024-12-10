@@ -36,12 +36,13 @@ function start(textures: THREE.Texture[]) {
   const camera = new THREE.PerspectiveCamera();
   camera.position.z = 3;
 
+  const holoMaterial = new HologramMaterial({
+    // monoMap: textures[0],
+    // colorMap: textures[1],
+  });
   const cardMesh = new THREE.Mesh(
     new THREE.PlaneGeometry(3.94 / 2.5, 5.5 / 2.5),
-    new HologramMaterial({
-      monoMap: textures[0],
-      colorMap: textures[1],
-    })
+    holoMaterial
   );
   cardMesh.rotation.y = -Math.PI / 15;
   scene.add(cardMesh);
@@ -49,7 +50,6 @@ function start(textures: THREE.Texture[]) {
   const lookAtPoint = new THREE.Vector3(0, 0, 3);
 
   renderer.setAnimationLoop(() => {
-    // cardMesh.rotation.y += 0.01;
     lookAtPoint.x = Math.sin(performance.now() / 1000);
     lookAtPoint.y = Math.cos(performance.now() / 1000);
     cardMesh.lookAt(lookAtPoint);
@@ -65,6 +65,23 @@ function start(textures: THREE.Texture[]) {
   }
   resize();
   window.addEventListener("resize", resize);
+
+  renderer.xr.addEventListener('sessionstart', () => {
+    const gl = renderer.getContext();
+
+    // テクスチャ1をテクスチャユニット0にバインド
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, textures[0]);
+    holoMaterial.uniforms.monoMap2.value = textures[0];
+
+    // テクスチャ2をテクスチャユニット1にバインド
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, textures[1]);
+    holoMaterial.uniforms.colorMap2.value = textures[1];
+
+    // 必要なら `needsUpdate` を設定
+    material.needsUpdate = true;
+});
 }
 
 const texturePaths = [
@@ -75,15 +92,8 @@ const texturePaths = [
 // テクスチャローダー
 const textureLoader = new THREE.TextureLoader();
 
-// テクスチャをロードする関数
-function loadTexture(url: string): Promise<THREE.Texture> {
-  return new Promise((resolve, reject) => {
-    textureLoader.load(url, resolve, undefined, reject);
-  });
+window.onload = async () => {
+  const texture1 = await textureLoader.loadAsync(texturePaths[0]);
+  const texture2 = await textureLoader.loadAsync(texturePaths[1]);
+  start([texture1, texture2]);
 }
-
-Promise.all(texturePaths.map(loadTexture))
-  .then((textures) => {
-    start(textures);
-  })
-  .catch(console.error);
