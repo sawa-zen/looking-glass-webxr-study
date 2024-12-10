@@ -11,7 +11,7 @@ config.targetDiam = 3;
 config.fovy = (14 * Math.PI) / 180;
 new LookingGlassWebXRPolyfill();
 
-function start() {
+function start(textures: THREE.Texture[]) {
   const scene = new THREE.Scene();
 
   // box の部屋
@@ -38,7 +38,10 @@ function start() {
 
   const cardMesh = new THREE.Mesh(
     new THREE.PlaneGeometry(3.94 / 2.5, 5.5 / 2.5),
-    new HologramMaterial()
+    new HologramMaterial({
+      monoMap: textures[0],
+      colorMap: textures[1],
+    })
   );
   cardMesh.rotation.y = -Math.PI / 15;
   scene.add(cardMesh);
@@ -64,8 +67,23 @@ function start() {
   window.addEventListener("resize", resize);
 }
 
-window.onload = function () {
-  new THREE.TextureLoader().load("pokeka_mono.jpg", () => {
-    start();
+const texturePaths = [
+  "pokeka_mono.jpg",
+  "pokeka.jpg",
+]
+
+// テクスチャローダー
+const textureLoader = new THREE.TextureLoader();
+
+// テクスチャをロードする関数
+function loadTexture(url: string): Promise<THREE.Texture> {
+  return new Promise((resolve, reject) => {
+    textureLoader.load(url, resolve, undefined, reject);
   });
 }
+
+Promise.all(texturePaths.map(loadTexture))
+  .then((textures) => {
+    start(textures);
+  })
+  .catch(console.error);
