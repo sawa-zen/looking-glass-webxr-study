@@ -71,8 +71,8 @@ vec3 kira(vec3 colorNoiseRGB) {
 
 void main() {
   vec2 st = vUv;
-  vec4 monoTexture = texture2D(monoMap, vUv);
   vec4 colorTexture = texture2D(colorMap, vUv);
+  vec4 monoTexture = texture2D(monoMap, vUv);
 
   // ノイズを作成
   vec2 pos = vec2(st * 6.0); // ノイズのスケール
