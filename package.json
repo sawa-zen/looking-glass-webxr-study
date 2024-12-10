@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "http://looking-glass-study.sawa-zen.github.io",
+  "homepage": "http://sawa-zen.github.io/looking-glass-study",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
