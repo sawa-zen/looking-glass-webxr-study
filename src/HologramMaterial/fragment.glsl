@@ -11,7 +11,7 @@ uniform sampler2D monoMap;
  * 参考: https://nogson2.hatenablog.com/entry/2017/11/18/150645
  * 参考: https://thebookofshaders.com/11/?lan=jp
  */
-float random(vec2 st) {
+float generateRandomFloat(vec2 st) {
   return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
 }
 
@@ -25,10 +25,10 @@ float generateValueNoise(in vec2 st) {
   vec2 i = floor(st);
   vec2 f = fract(st);
 
-  float a = random(i);
-  float b = random(i + vec2(1.0, 0.0));
-  float c = random(i + vec2(0.0, 1.0));
-  float d = random(i + vec2(1.0, 1.0));
+  float a = generateRandomFloat(i);
+  float b = generateRandomFloat(i + vec2(1.0, 0.0));
+  float c = generateRandomFloat(i + vec2(0.0, 1.0));
+  float d = generateRandomFloat(i + vec2(1.0, 1.0));
 
   vec2 u = f*f*(3.0-2.0*f);
 
@@ -64,7 +64,7 @@ vec3 rgb2hsv(vec3 rgb) {
 /**
  * カメラとポリゴンの角度を返す
  */
-float viewAngle() {
+float getViewAngle() {
   vec3 viewDir = normalize(cameraPosition - vWorldPosition); // カメラ方向
   return dot(viewDir, normalize(vNormal)); // ビュー方向と法線の角度 -1.0 ～ 1.0
 }
@@ -76,7 +76,7 @@ float viewAngle() {
 vec3 kira(vec3 colorNoiseRGB) {
   // ビュー方向を計算
   float kiraStrength = 20.0;
-  float angle = viewAngle() * kiraStrength;
+  float angle = getViewAngle() * kiraStrength;
   float normalizedAngle = (angle + 1.0) / 2.0; // 0.0 ～ 1.0
 
   // 角度を色相 (Hue) に変換
