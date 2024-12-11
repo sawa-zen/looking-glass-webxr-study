@@ -9,6 +9,7 @@ uniform sampler2D monoMap;
  * 乱数生成
  * @param {vec2} st 位置
  * 参考: https://nogson2.hatenablog.com/entry/2017/11/18/150645
+ * 参考: https://thebookofshaders.com/11/?lan=jp
  */
 float random(vec2 st) {
   return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
@@ -18,8 +19,9 @@ float random(vec2 st) {
   * バリューノイズ
   * @param {vec2} st 位置
   * 参考: https://nogson2.hatenablog.com/entry/2017/11/18/150645
+  * 参考: https://thebookofshaders.com/11/?lan=jp
   */
-float noise(in vec2 st) {
+float generateValueNoise(in vec2 st) {
   vec2 i = floor(st);
   vec2 f = fract(st);
 
@@ -92,8 +94,8 @@ void main() {
 
   // ノイズを作成
   vec2 pos = vec2(st * 6.0); // ノイズのスケール
-  float n = noise(pos);      // ノイズ値
-  vec3 colorNoiseHSV = vec3(n, 1.0, 1.0);
+  float valueNoise = generateValueNoise(pos); // ノイズ値
+  vec3 colorNoiseHSV = vec3(valueNoise, 1.0, 1.0);
 
   // キラキラのノイズを作成
   vec3 kiraNoiseRGB = kira(hsv2rgb(colorNoiseHSV)) * monoTexture.rgb;
