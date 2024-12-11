@@ -23,7 +23,7 @@ function start() {
   scene.add(directionalLight);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1));
   renderer.setClearColor(0xffffff);
   document.body.append(renderer.domElement);
   renderer.xr.enabled = true;
@@ -31,19 +31,23 @@ function start() {
   const camera = new THREE.PerspectiveCamera();
   camera.position.z = 3;
 
+  const cameraDirection = new THREE.Vector3();
+  camera.getWorldDirection(cameraDirection);
+
   const cardMesh = new THREE.Mesh(
     new THREE.PlaneGeometry(3.94 / 2.5, 5.5 / 2.5),
-    new HologramMaterial()
+    new HologramMaterial({ cameraDirection })
   );
   cardMesh.rotation.y = -Math.PI / 15;
   scene.add(cardMesh);
 
-  const lookAtPoint = new THREE.Vector3(0, 0, 3);
+  const lookAtPoint = new THREE.Vector3(0, 0, 1);
 
   renderer.setAnimationLoop(() => {
     lookAtPoint.x = Math.sin(performance.now() / 1000);
     lookAtPoint.y = Math.cos(performance.now() / 1000);
     cardMesh.lookAt(lookAtPoint);
+    cardMesh.material.uniforms.cameraDirection.value.copy(cameraDirection);
     renderer.render(scene, camera);
   });
 
