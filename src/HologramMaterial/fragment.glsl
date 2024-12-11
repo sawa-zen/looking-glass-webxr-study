@@ -5,10 +5,20 @@ varying vec3 vWorldPosition; // ワールド座標
 uniform sampler2D colorMap;
 uniform sampler2D monoMap;
 
+/**
+ * 乱数生成
+ * @param {vec2} st 位置
+ * 参考: https://nogson2.hatenablog.com/entry/2017/11/18/150645
+ */
 float random(vec2 st) {
   return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
 }
 
+/**
+  * バリューノイズ
+  * @param {vec2} st 位置
+  * 参考: https://nogson2.hatenablog.com/entry/2017/11/18/150645
+  */
 float noise(in vec2 st) {
   vec2 i = floor(st);
   vec2 f = fract(st);
