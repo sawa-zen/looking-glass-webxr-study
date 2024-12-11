@@ -73,7 +73,7 @@ float getViewAngle() {
  * キラキラのrgbを返す
  * @param {vec3} colorNoise 七色のノイズ
  */
-vec3 kira(vec3 colorNoiseRGB) {
+vec3 generateKiraRGB(vec3 colorNoiseRGB) {
   // ビュー方向を計算
   float kiraStrength = 20.0;
   float angle = getViewAngle() * kiraStrength;
@@ -98,7 +98,7 @@ void main() {
   vec3 colorNoiseHSV = vec3(valueNoise, 1.0, 1.0);
 
   // キラキラのノイズを作成
-  vec3 kiraNoiseRGB = kira(hsv2rgb(colorNoiseHSV)) * monoTexture.rgb;
+  vec3 kiraNoiseRGB = generateKiraRGB(hsv2rgb(colorNoiseHSV)) * monoTexture.rgb;
 
   // 背景画像にキラキラノイズを合成
   gl_FragColor = vec4(kiraNoiseRGB + colorTexture.rgb, 1.0);
