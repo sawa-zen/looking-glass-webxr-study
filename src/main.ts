@@ -6,7 +6,7 @@ import {
 } from "@lookingglass/webxr";
 import { VRButton } from "three/examples/jsm/webxr/VRButton.js";
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
-import { HologramMaterial } from "./HologramMaterial";
+import { HolographicMaterial } from "./HolographicMaterial";
 
 const config = LookingGlassConfig;
 config.targetY = 0;
@@ -37,7 +37,7 @@ function start() {
 
   const cardMesh = new THREE.Mesh(
     new THREE.PlaneGeometry(3.94 / 2.5, 5.5 / 2.5),
-    new HologramMaterial({ cameraDirection })
+    new HolographicMaterial({ cameraDirection })
   );
   cardMesh.rotation.y = -Math.PI / 15;
   scene.add(cardMesh);

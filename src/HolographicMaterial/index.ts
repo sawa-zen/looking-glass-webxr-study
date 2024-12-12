@@ -6,7 +6,7 @@ interface Attributes {
   cameraDirection: THREE.Vector3
 }
 
-export class HologramMaterial extends THREE.ShaderMaterial {
+export class HolographicMaterial extends THREE.ShaderMaterial {
   constructor({ cameraDirection }: Attributes ) {
     super({
       vertexShader,
