@@ -1,8 +1,6 @@
 uniform vec2 resolution;
 varying vec2 vUv;
 varying vec3 vNormal;
-varying vec3 vWorldPosition;
-uniform vec3 cameraDirection;
 uniform sampler2D colorMap;
 uniform sampler2D monoMap;
 
@@ -105,9 +103,9 @@ void main() {
   float valueNoise = generateValueNoise(pos); // ノイズ値
   vec3 colorNoiseHSV = vec3(valueNoise, 1.0, 1.0);
 
-  // // キラキラのノイズを作成
+  // キラキラのノイズを作成
   vec3 kiraNoiseRGB = generateKiraRGB(hsv2rgb(colorNoiseHSV)) * monoTexture.rgb;
 
-  // // 背景画像にキラキラノイズを合成
+  // 背景画像にキラキラノイズを合成
   gl_FragColor = vec4(kiraNoiseRGB + colorTexture.rgb, 1.0);
 }
