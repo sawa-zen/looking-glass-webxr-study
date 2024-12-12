@@ -5,6 +5,7 @@ import {
   LookingGlassConfig,
 } from "@lookingglass/webxr";
 import { VRButton } from "three/examples/jsm/webxr/VRButton.js";
+import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 import { HologramMaterial } from "./HologramMaterial";
 
 const config = LookingGlassConfig;
@@ -23,7 +24,7 @@ function start() {
   scene.add(directionalLight);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 0.5));
   renderer.setClearColor(0xffffff);
   document.body.append(renderer.domElement);
   renderer.xr.enabled = true;
@@ -40,6 +41,8 @@ function start() {
   );
   cardMesh.rotation.y = -Math.PI / 15;
   scene.add(cardMesh);
+  const vertexHelper = new VertexNormalsHelper(cardMesh, 0.2, 0x00ff00);
+  scene.add(vertexHelper);
 
   const lookAtPoint = new THREE.Vector3(0, 0, 1);
 
@@ -47,7 +50,7 @@ function start() {
     lookAtPoint.x = Math.sin(performance.now() / 1000);
     lookAtPoint.y = Math.cos(performance.now() / 1000);
     cardMesh.lookAt(lookAtPoint);
-    cardMesh.material.uniforms.cameraDirection.value.copy(cameraDirection);
+    vertexHelper.update();
     renderer.render(scene, camera);
   });
 

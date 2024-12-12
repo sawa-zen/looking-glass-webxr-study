@@ -1,8 +1,8 @@
 uniform vec2 resolution;
 varying vec2 vUv;
-varying vec3 vNormal;        // 回転後の法線（ワールド空間）
-varying vec3 vWorldPosition; // ワールド座標
-uniform vec3 cameraDirection; // カメラの向き
+varying vec3 vNormal;
+varying vec3 vWorldPosition;
+uniform vec3 cameraDirection;
 uniform sampler2D colorMap;
 uniform sampler2D monoMap;
 
@@ -66,8 +66,10 @@ vec3 rgb2hsv(vec3 rgb) {
  * カメラとポリゴンの角度を返す
  */
 float getViewAngle() {
-  vec3 faceNormal = normalize(vNormal); // ポリゴンの法線
-  return dot(faceNormal, cameraDirection); // カメラ方向と法線の角度 -1.0 ～ 1.0
+  vec3 faceNormal = normalize(vNormal); // 法線ベクトル
+  vec3 lightDir = normalize(vec3(0.0, -1.0, -1.0)); // ライトの向きベクトル
+  float angle = acos(dot(faceNormal, lightDir));
+  return angle; // 0.0 ～ π
 }
 
 /**
@@ -75,9 +77,10 @@ float getViewAngle() {
  * @param {float} strength 角度の強さ
  */
 vec3 generateAngleRGB(float strength) {
-  float angle = getViewAngle() * strength;
-  float normalizedAngle = (angle + 1.0) / 2.0; // 0.0 ～ 1.0
-  return hsv2rgb(vec3(normalizedAngle, 1.0, 1.0)); // 彩度=1.0, 明度=1.0
+  float pi = 3.141592653589793;
+  float angle = mod(getViewAngle() * strength, pi) / pi; // 0.0 ～ 1.0
+  vec3 colorHSV = vec3(angle, 1.0, 1.0);
+  return hsv2rgb(colorHSV);
 }
 
 /**
@@ -86,7 +89,7 @@ vec3 generateAngleRGB(float strength) {
  */
 vec3 generateKiraRGB(vec3 colorNoiseRGB) {
   // 角度を色相 (Hue) に変換
-  vec3 angleColorRGB = generateAngleRGB(20.0);
+  vec3 angleColorRGB = generateAngleRGB(10.0);
   float colorDiff = distance(colorNoiseRGB, angleColorRGB);
   vec3 kiraNoiseHSV = rgb2hsv(colorNoiseRGB);
   kiraNoiseHSV.z = max(1.0 - colorDiff, 0.0);
@@ -94,19 +97,17 @@ vec3 generateKiraRGB(vec3 colorNoiseRGB) {
 }
 
 void main() {
-  gl_FragColor = vec4(generateAngleRGB(20.0), 1.0);
-  // vec2 st = vUv;
-  // vec4 colorTexture = texture2D(colorMap, vUv);
-  // vec4 monoTexture = texture2D(monoMap, vUv);
+  vec4 colorTexture = texture2D(colorMap, vUv);
+  vec4 monoTexture = texture2D(monoMap, vUv);
 
-  // // ノイズを作成
-  // vec2 pos = vec2(st * 6.0); // ノイズのスケール
-  // float valueNoise = generateValueNoise(pos); // ノイズ値
-  // vec3 colorNoiseHSV = vec3(valueNoise, 1.0, 1.0);
+  // ノイズを作成
+  vec2 pos = vec2(vUv * 6.0); // ノイズのスケール
+  float valueNoise = generateValueNoise(pos); // ノイズ値
+  vec3 colorNoiseHSV = vec3(valueNoise, 1.0, 1.0);
 
   // // キラキラのノイズを作成
-  // vec3 kiraNoiseRGB = generateKiraRGB(hsv2rgb(colorNoiseHSV)) * monoTexture.rgb;
+  vec3 kiraNoiseRGB = generateKiraRGB(hsv2rgb(colorNoiseHSV)) * monoTexture.rgb;
 
   // // 背景画像にキラキラノイズを合成
-  // gl_FragColor = vec4(kiraNoiseRGB + colorTexture.rgb, 1.0);
+  gl_FragColor = vec4(kiraNoiseRGB + colorTexture.rgb, 1.0);
 }
