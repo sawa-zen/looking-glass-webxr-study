@@ -24,7 +24,7 @@ function start() {
   scene.add(directionalLight);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 0.5));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.setClearColor(0xffffff);
   document.body.append(renderer.domElement);
   renderer.xr.enabled = true;
@@ -42,6 +42,7 @@ function start() {
   cardMesh.rotation.y = -Math.PI / 15;
   scene.add(cardMesh);
   const vertexHelper = new VertexNormalsHelper(cardMesh, 0.2, 0x00ff00);
+  vertexHelper.visible = false
   scene.add(vertexHelper);
 
   const lookAtPoint = new THREE.Vector3(0, 0, 1);
