@@ -13,8 +13,4 @@ export class HolographicMaterial extends THREE.ShaderMaterial {
       }
     })
   }
-
-  update() {
-    this.uniforms.cameraDirection.value.needsUpdate = true
-  }
 }
