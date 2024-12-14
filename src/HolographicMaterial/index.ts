@@ -2,17 +2,12 @@ import * as THREE from 'three'
 import vertexShader from './vertex.glsl?raw'
 import fragmentShader from './fragment.glsl?raw'
 
-interface Attributes {
-  cameraDirection: THREE.Vector3
-}
-
 export class HolographicMaterial extends THREE.ShaderMaterial {
-  constructor({ cameraDirection }: Attributes ) {
+  constructor() {
     super({
       vertexShader,
       fragmentShader,
       uniforms: {
-        cameraDirection: { value: cameraDirection },
         colorMap: { value: new THREE.TextureLoader().load("pokeka.jpg") },
         monoMap: { value: new THREE.TextureLoader().load("pokeka_mono.jpg") },
       }

@@ -37,7 +37,7 @@ function start() {
 
   const cardMesh = new THREE.Mesh(
     new THREE.PlaneGeometry(3.94 / 2.5, 5.5 / 2.5),
-    new HolographicMaterial({ cameraDirection })
+    new HolographicMaterial()
   );
   cardMesh.rotation.y = -Math.PI / 15;
   scene.add(cardMesh);
