@@ -8,8 +8,8 @@ export class HolographicMaterial extends THREE.ShaderMaterial {
       vertexShader,
       fragmentShader,
       uniforms: {
-        colorMap: { value: new THREE.TextureLoader().load("pokeka.jpg") },
-        monoMap: { value: new THREE.TextureLoader().load("pokeka_mono.jpg") },
+        colorMap: { value: new THREE.TextureLoader().load("pokeca.jpg") },
+        monoMap: { value: new THREE.TextureLoader().load("pokeca_mono.jpg") },
       }
     })
   }

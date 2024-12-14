@@ -1,4 +1,4 @@
-varying vec2 vUv;
+varying vec2 vUv;            // テクスチャ座標
 varying vec3 vNormal;        // ワールド空間の法線
 varying vec3 vWorldPosition; // ワールド座標
 

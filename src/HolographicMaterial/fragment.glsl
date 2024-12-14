@@ -1,4 +1,3 @@
-uniform vec2 resolution;
 varying vec2 vUv;
 varying vec3 vNormal;
 uniform sampler2D colorMap;
