@@ -19,7 +19,7 @@ float generateRandomFloat(vec2 st) {
   * 参考: https://nogson2.hatenablog.com/entry/2017/11/18/150645
   * 参考: https://thebookofshaders.com/11/?lan=jp
   */
-float generateValueNoise(in vec2 st) {
+float generateValueNoise(vec2 st) {
   vec2 i = floor(st);
   vec2 f = fract(st);
 
@@ -60,7 +60,7 @@ vec3 rgb2hsv(vec3 rgb) {
 }
 
 /**
- * カメラとポリゴンの角度を返す
+ * 面の法線ベクトルと真下のベクトルの角度を返す
  */
 float getViewAngle() {
   vec3 faceNormal = normalize(vNormal); // 法線ベクトル
@@ -85,26 +85,30 @@ vec3 generateAngleRGB(float strength) {
  * @param {vec3} colorNoise 七色のノイズ
  */
 vec3 generateKiraRGB(vec3 colorNoiseRGB) {
-  // 角度を色相 (Hue) に変換
-  vec3 angleColorRGB = generateAngleRGB(10.0);
-  float colorDiff = distance(colorNoiseRGB, angleColorRGB);
+  vec3 angleColorRGB = generateAngleRGB(20.0);              // 角度から表示色を算出
+  float colorDiff = distance(colorNoiseRGB, angleColorRGB); // 表示色とノイズの値の差を計算
+  float brightness = max(1.0 - colorDiff, 0.0);             // 明るさを計算
+
   vec3 kiraNoiseHSV = rgb2hsv(colorNoiseRGB);
-  kiraNoiseHSV.z = max(1.0 - colorDiff, 0.0);
+  kiraNoiseHSV.z = brightness;                              // 明るさを設定
   return hsv2rgb(kiraNoiseHSV);
 }
 
 void main() {
-  vec4 colorTexture = texture2D(colorMap, vUv);
-  vec4 monoTexture = texture2D(monoMap, vUv);
-
   // ノイズを作成
-  vec2 pos = vec2(vUv * 6.0); // ノイズのスケール
-  float valueNoise = generateValueNoise(pos); // ノイズ値
-  vec3 colorNoiseHSV = vec3(valueNoise, 1.0, 1.0);
+  vec2 pos = vec2(vUv * 6.0);                           // ノイズのスケール
+  float valueNoise = generateValueNoise(pos);           // ノイズ値
+  vec3 colorNoiseHSV = vec3(valueNoise, 1.0, 1.0);      // HSV の色相にノイズの値を使用する
+  vec3 colorNoiseRGB = hsv2rgb(colorNoiseHSV);          // HSVをRGBに変換
 
   // キラキラのノイズを作成
-  vec3 kiraNoiseRGB = generateKiraRGB(hsv2rgb(colorNoiseHSV)) * monoTexture.rgb;
+  vec3 kiraNoiseRGB = generateKiraRGB(colorNoiseRGB);
+  vec4 monoTexture = texture2D(monoMap, vUv);           // モノクロ画像を取得
+  kiraNoiseRGB = kiraNoiseRGB * monoTexture.rgb;        // モノクロ画像の色を乗算してキラキラをマスク
 
   // 背景画像にキラキラノイズを合成
-  gl_FragColor = vec4(kiraNoiseRGB + colorTexture.rgb, 1.0);
+  vec4 colorTexture = texture2D(colorMap, vUv);         // 背景画像を取得
+  vec3 finalColorRGB = colorTexture.rgb + kiraNoiseRGB; // 背景画像とキラキラを合成
+
+  gl_FragColor = vec4(finalColorRGB, 1.0);
 }

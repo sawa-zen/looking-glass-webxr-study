@@ -39,8 +39,8 @@ function start() {
     new HolographicMaterial()
   );
   scene.add(cardMesh);
-  const vertexHelper = new VertexNormalsHelper(cardMesh, 0.2, 0x00ff00);
-  vertexHelper.visible = false
+  const vertexHelper = new VertexNormalsHelper(cardMesh, 0.2, 0xff0000);
+  vertexHelper.visible = false;
   scene.add(vertexHelper);
 
   const lookAtPoint = new THREE.Vector3(0, 0, 2);
