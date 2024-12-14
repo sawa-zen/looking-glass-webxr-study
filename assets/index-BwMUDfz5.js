@@ -4277,7 +4277,7 @@ float generateRandomFloat(vec2 st) {
   * 参考: https://nogson2.hatenablog.com/entry/2017/11/18/150645
   * 参考: https://thebookofshaders.com/11/?lan=jp
   */
-float generateValueNoise(in vec2 st) {
+float generateValueNoise(vec2 st) {
   vec2 i = floor(st);
   vec2 f = fract(st);
 
@@ -4318,7 +4318,7 @@ vec3 rgb2hsv(vec3 rgb) {
 }
 
 /**
- * カメラとポリゴンの角度を返す
+ * 面の法線ベクトルと真下のベクトルの角度を返す
  */
 float getViewAngle() {
   vec3 faceNormal = normalize(vNormal); // 法線ベクトル
@@ -4343,27 +4343,30 @@ vec3 generateAngleRGB(float strength) {
  * @param {vec3} colorNoise 七色のノイズ
  */
 vec3 generateKiraRGB(vec3 colorNoiseRGB) {
-  // 角度を色相 (Hue) に変換
-  vec3 angleColorRGB = generateAngleRGB(10.0);
-  float colorDiff = distance(colorNoiseRGB, angleColorRGB);
+  vec3 angleColorRGB = generateAngleRGB(20.0);              // 角度から表示色を算出
+  float colorDiff = distance(colorNoiseRGB, angleColorRGB); // 表示色とノイズの値の差を計算
+  float brightness = max(1.0 - colorDiff, 0.0);             // 明るさを計算
+
   vec3 kiraNoiseHSV = rgb2hsv(colorNoiseRGB);
-  kiraNoiseHSV.z = max(1.0 - colorDiff, 0.0);
+  kiraNoiseHSV.z = brightness;                              // 明るさを設定
   return hsv2rgb(kiraNoiseHSV);
 }
 
 void main() {
-  vec4 colorTexture = texture2D(colorMap, vUv);
-  vec4 monoTexture = texture2D(monoMap, vUv);
-
   // ノイズを作成
-  vec2 pos = vec2(vUv * 6.0); // ノイズのスケール
-  float valueNoise = generateValueNoise(pos); // ノイズ値
-  vec3 colorNoiseHSV = vec3(valueNoise, 1.0, 1.0);
+  vec2 pos = vec2(vUv * 6.0);                           // ノイズのスケール
+  float valueNoise = generateValueNoise(pos);           // ノイズ値
+  vec3 colorNoiseHSV = vec3(valueNoise, 1.0, 1.0);      // HSV の色相にノイズの値を使用する
+  vec3 colorNoiseRGB = hsv2rgb(colorNoiseHSV);          // HSVをRGBに変換
 
   // キラキラのノイズを作成
-  vec3 kiraNoiseRGB = generateKiraRGB(hsv2rgb(colorNoiseHSV)) * monoTexture.rgb;
+  vec3 kiraNoiseRGB = generateKiraRGB(colorNoiseRGB);
+  vec4 monoTexture = texture2D(monoMap, vUv);           // モノクロ画像を取得
+  kiraNoiseRGB = kiraNoiseRGB * monoTexture.rgb;        // モノクロ画像の色を乗算してキラキラをマスク
 
   // 背景画像にキラキラノイズを合成
-  gl_FragColor = vec4(kiraNoiseRGB + colorTexture.rgb, 1.0);
-}
-`;class Jg extends Mn{constructor(){super({vertexShader:Zg,fragmentShader:$g,uniforms:{colorMap:{value:new yl().load("pokeca.jpg")},monoMap:{value:new yl().load("pokeca_mono.jpg")}}})}}const Ts=Kg;Ts.targetY=0;Ts.targetZ=0;Ts.targetDiam=3;Ts.fovy=14*Math.PI/180;new _o;function ev(){const n=new o0;n.add(new g0(16777215));const e=new m0(16777215);e.position.set(3,3,3),n.add(e);const t=new a0({antialias:!0,alpha:!0});t.setPixelRatio(Math.min(devicePixelRatio,2)),document.body.append(t.domElement),t.xr.enabled=!0;const i=new Wt;i.position.z=3;const r=new K;i.getWorldDirection(r);const s=new on(new Sr(3.94/2.5,5.5/2.5),new Jg);n.add(s);const a=new jg(s,.2,65280);a.visible=!1,n.add(a);const o=new K(0,0,2);t.setAnimationLoop(()=>{o.x=Math.sin(performance.now()/1e3),o.y=Math.cos(performance.now()/1e3),s.lookAt(o),a.update(),t.render(n,i)}),t.xr.addEventListener("sessionstart",()=>{s.material.uniforms.colorMap.value.needsUpdate=!0}),document.body.append(Ii.createButton(t));function u(){t.setSize(innerWidth,innerHeight),i.aspect=innerWidth/innerHeight,i.updateProjectionMatrix()}u(),window.addEventListener("resize",u)}ev();
+  vec4 colorTexture = texture2D(colorMap, vUv);         // 背景画像を取得
+  vec3 finalColorRGB = colorTexture.rgb + kiraNoiseRGB; // 背景画像とキラキラを合成
+
+  gl_FragColor = vec4(finalColorRGB, 1.0);
+}`;class Jg extends Mn{constructor(){super({vertexShader:Zg,fragmentShader:$g,uniforms:{colorMap:{value:new yl().load("pokeca.jpg")},monoMap:{value:new yl().load("pokeca_mono.jpg")}}})}}const Ts=Kg;Ts.targetY=0;Ts.targetZ=0;Ts.targetDiam=3;Ts.fovy=14*Math.PI/180;new _o;function ev(){const n=new o0;n.add(new g0(16777215));const e=new m0(16777215);e.position.set(3,3,3),n.add(e);const t=new a0({antialias:!0,alpha:!0});t.setPixelRatio(Math.min(devicePixelRatio,2)),document.body.append(t.domElement),t.xr.enabled=!0;const i=new Wt;i.position.z=3;const r=new K;i.getWorldDirection(r);const s=new on(new Sr(3.94/2.5,5.5/2.5),new Jg);n.add(s);const a=new jg(s,.2,16711680);a.visible=!1,n.add(a);const o=new K(0,0,2);t.setAnimationLoop(()=>{o.x=Math.sin(performance.now()/1e3),o.y=Math.cos(performance.now()/1e3),s.lookAt(o),a.update(),t.render(n,i)}),t.xr.addEventListener("sessionstart",()=>{s.material.uniforms.colorMap.value.needsUpdate=!0}),document.body.append(Ii.createButton(t));function u(){t.setSize(innerWidth,innerHeight),i.aspect=innerWidth/innerHeight,i.updateProjectionMatrix()}u(),window.addEventListener("resize",u)}ev();
